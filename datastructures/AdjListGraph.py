@@ -4,15 +4,19 @@
 # @Author: ZhaoKe
 # @File : AdjListGraph.py
 # @Software: PyCharm
+from typing import List
 from datastructures.func import insert_vertex_sorted
 from datastructures.graph_entities import Vertex, Edge
 
 
 class AdjListGraph(object):
-    def __init__(self, num_ver: int):
-        self.vertices = [Vertex(index=i, name=str(i)) for i in range(num_ver)]
+    def __init__(self, vertices, num_ver: int = 0):
+        if vertices:
+            self.vertices = vertices
+        else:
+            self.vertices = [Vertex(index=i, name=str(i)) for i in range(num_ver)]
         self.edge_list = []
-        self.children = [[] for _ in range(num_ver)]
+        self.children = [[] for _ in range(len(self.vertices))]
 
     def add_vertex(self, key: Vertex):
         insert_vertex_sorted(self.vertices, key=key)
@@ -30,7 +34,7 @@ class AdjListGraph(object):
             print("]")
 
     def reverse_graph(self):
-        rev_graph = AdjListGraph(num_ver=len(self.vertices))
+        rev_graph = AdjListGraph(vertices=self.vertices, num_ver=len(self.vertices))
         for edge in self.edge_list:
             insert_vertex_sorted(array=rev_graph.children[edge.post_v], key=self.vertices[edge.pre_v])
         return rev_graph
@@ -52,8 +56,8 @@ class AdjMatrixGraph(object):
         for i in range(len(self.adj_matrix)):
             self.adj_matrix[i].append(-1)
         for i in range(len(self.vertices)):
-            for j in range(len(self.vertices)-1, pos-2, -1):
-                self.adj_matrix[i][j] = self.adj_matrix[i][j-1]
+            for j in range(len(self.vertices) - 1, pos - 2, -1):
+                self.adj_matrix[i][j] = self.adj_matrix[i][j - 1]
             self.adj_matrix[i][i] = 0
         self.adj_matrix.insert(pos, [])
 

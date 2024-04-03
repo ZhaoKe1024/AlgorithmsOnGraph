@@ -24,7 +24,7 @@ class Vertex(object):
         self.job_out_degree = 0
 
     def __str__(self):
-        return f"Vertex:("+self.name+")"
+        return f"Vertex:({self.index}, {self.name})"
 
     def get_info(self):
         return f"[{self.index}]:{self.name}, time[{self.start_time},{self.end_time}], pre_idle:{self.pre_idle_time}, params({self.in_job_pre},{self.in_job_post},{self.in_mac_pre},{self.in_mac_post})"
@@ -61,3 +61,6 @@ class Edge(object):
 
     def __eq__(self, other):
         return self.pre_v == other.pre_v and self.post_v == other.post_v
+
+    def edge_info(self, ) ->str:
+        return

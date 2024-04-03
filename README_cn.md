@@ -16,6 +16,10 @@ ActivityGraph.py : AOV和AOE模型的实现, 包含以下算法:
 
 
 ## 公共祖先问题
+返回所有公共祖先
+
+./CommonAncestors.find_all_ca(graph=G, v=v1, w=v2)
+
 - 数据结构：./datastructures/AdjListGraph.py
 - 算法: ./CommonAncestors.py
 

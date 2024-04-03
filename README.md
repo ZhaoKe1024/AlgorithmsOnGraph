@@ -15,6 +15,10 @@ ActivityGraph.py : Implementing the AOV(Activity on Vertex) and AOE(Activity on 
 - AOE.critical_path(self): find the critical path on this AOE Graph.
 
 ## Local Common Ancestor Problem
+find all common ancestors:
+
+./CommonAncestors.find_all_ca(graph=G, v=v1, w=v2)
+
 - data structure：./datastructures/AdjListGraph.py
 - algorithm: ./CommonAncestors.py
 
