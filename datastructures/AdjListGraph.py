@@ -17,6 +17,7 @@ class AdjListGraph(object):
             self.vertices = [Vertex(index=i, name=str(i)) for i in range(num_ver)]
         self.edge_list = []
         self.children = [[] for _ in range(len(self.vertices))]
+        self.indegree = [0] * len(self.vertices)
 
     def add_vertex(self, key: Vertex):
         insert_vertex_sorted(self.vertices, key=key)
@@ -24,6 +25,7 @@ class AdjListGraph(object):
     def add_edge(self, edge: Edge):
         self.edge_list.append(edge)
         insert_vertex_sorted(array=self.children[edge.pre_v], key=self.vertices[edge.post_v])
+        self.indegree[edge.post_v] += 1
 
     def print_edges(self) -> None:
         print(f"=======AdjList_Graph=======")
