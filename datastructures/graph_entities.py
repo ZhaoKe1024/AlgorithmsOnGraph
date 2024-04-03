@@ -8,9 +8,9 @@ import numpy as np
 
 
 class Vertex(object):
-    def __init__(self, index, name, duration=None):
+    def __init__(self, index, name=None, duration=None):
         self.index = index
-        self.name = name
+        self.name = name if name else str(index)
         self.in_job_pre = -1
         self.in_mac_pre = -1
         self.in_job_post = -1
@@ -24,6 +24,9 @@ class Vertex(object):
         self.job_out_degree = 0
 
     def __str__(self):
+        return f"Vertex:("+self.name+")"
+
+    def get_info(self):
         return f"[{self.index}]:{self.name}, time[{self.start_time},{self.end_time}], pre_idle:{self.pre_idle_time}, params({self.in_job_pre},{self.in_job_post},{self.in_mac_pre},{self.in_mac_post})"
 
     def get_t_info(self):

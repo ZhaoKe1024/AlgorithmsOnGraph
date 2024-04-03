@@ -20,6 +20,21 @@ import functools
 from datastructures.graph_entities import Edge
 
 
+class Node(object):
+    def __init__(self, data, next_node):
+        self.data = data
+        self.next_node = next_node
+
+    def __str__(self):
+        return str(self.data.weight)
+
+
+def cmp_triples(t1, t2):
+    if t1.pre_v == t2.pre_v and t1.post_v == t2.post_v:
+        return 0
+    return -1 if t1.pre_v < t2.pre_v or (t1.pre_v == t2.pre_v and t1.post_v < t2.post_v) else 1
+
+
 class SortedSinglyList(object):
     def __init__(self, values=None):
         self.head = Node(None, None)
@@ -91,21 +106,6 @@ class SortedSinglyList(object):
             if p is not None:
                 res += ', ' + str(p.data)
         return res+']'
-
-
-class Node(object):
-    def __init__(self, data, next_node):
-        self.data = data
-        self.next_node = next_node
-
-    def __str__(self):
-        return str(self.data.weight)
-
-
-def cmp_triples(t1, t2):
-    if t1.pre_v == t2.pre_v and t1.post_v == t2.post_v:
-        return 0
-    return -1 if t1.pre_v < t2.pre_v or (t1.pre_v == t2.pre_v and t1.post_v < t2.post_v) else 1
 
 
 if __name__ == '__main__':

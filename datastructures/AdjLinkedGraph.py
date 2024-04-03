@@ -2,7 +2,7 @@
 # -*- coding: utf_8 -*-
 # @Time : 2023/11/4 9:06
 # @Author: ZhaoKe
-# @File : AdjList_Graph.py
+# @File : AdjLinkedGraph.py
 # @Software: PyCharm
 """
 Graph Structure based on Adjacent Matrix
@@ -23,13 +23,12 @@ from datastructures.LinkedMatrix import LinkedMatrix
 from datastructures.graph_entities import Edge, Vertex
 
 
-class AdjListGraph(object):
+class AdjLinkedGraph(object):
     def __init__(self, vertex_list, edges):
         self._vertex_list = vertex_list
         self._edge_list = edges
         self.AdjMatrix = LinkedMatrix(len(vertex_list), len(vertex_list), edges)
         self.MAX_WEIGHT = np.inf
-
 
     def DFS_Traverse(self, index):
         visited = [False for _ in range(self.vertex_count())]
@@ -107,7 +106,6 @@ class AdjListGraph(object):
         return len(self._vertex_list)
 
 
-
 if __name__ == '__main__':
     print("OK")
     vertices0 = [Vertex(i, chr(65 + i)) for i in range(10)]
@@ -141,7 +139,7 @@ if __name__ == '__main__':
     random.shuffle(edges1)
     for edge in edges1:
         print(edge)
-    graph = AdjListGraph(vertices1, edges1)
+    graph = AdjLinkedGraph(vertices1, edges1)
     print("----Graph----")
     for item in graph.AdjMatrix.row_list:
         print(item)
