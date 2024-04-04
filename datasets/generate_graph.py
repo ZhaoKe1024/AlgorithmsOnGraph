@@ -2,6 +2,8 @@
 # @Author : ZhaoKe
 # @Time : 2024-04-03 22:08
 from typing import List
+
+from datastructures.LayerGraph import LayerNetworkGraph
 from datastructures.graph_entities import Vertex, Edge
 from datastructures.AdjListGraph import AdjListGraph
 
@@ -28,6 +30,35 @@ def generate_graph(name_list: List[str], edge_list: List[List]) -> AdjListGraph:
     return graph
 
 
+def get_layer_graph_1() -> LayerNetworkGraph:
+    """一共有多少层，找深度就够了"""
+    return generate_layer_graph(
+        name_layer=[["A3"], ["T", "A2"], ["B", "A1"], ["S"], ["D"], ["X"],
+                    ],
+        edge_layer=[[0, 1], [1, 3], [0, 4], [2, 3], [2, 4], [3, 5], [4, 5], [4, 6], [5, 6], [5, 7], [6, 7]]
+    )
+
+
+def generate_layer_graph(name_layer, edge_layer):
+    vertex_layer = []
+    vertex_list = []
+    ind = 0
+    for layer in name_layer:
+        layer_list = []
+        for item in layer:
+            vertex_list.append(Vertex(index=ind, name=item))
+            layer_list.append(ind)
+            ind += 1
+        vertex_layer.append(layer_list)
+    graph = LayerNetworkGraph(vertex_list=vertex_list, layer_map=vertex_layer)
+    for j, edge in enumerate(edge_layer):
+        graph.add_edge(Edge(edge_id=j, pre=edge[0], post=edge[1], weight=1))
+    return graph
+
+
 if __name__ == '__main__':
-    graph1 = get_graph_2()
+    graph1 = get_layer_graph_1()
+    print(graph1.layer_map)
+    graph1 = graph1.reverse_graph()
+    print(graph1.layer_map)
     graph1.print_edges()
