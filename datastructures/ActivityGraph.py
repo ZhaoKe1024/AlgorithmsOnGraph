@@ -19,6 +19,9 @@
 import random
 from collections import deque
 from copy import copy
+from typing import List
+
+from datastructures.graph_entities import Vertex, Edge
 
 """
 关键路径求解，关键是求解每个活动的“最早开始时间”和“最晚开始时间”，两者相等就代表是关键活动
@@ -29,7 +32,7 @@ class ActivityNetwork(object):
     """同时具有AOV和AOE的性质
     下一步改进，"""
 
-    def __init__(self, vertex_list, edges):
+    def __init__(self, vertex_list, edges: List[Edge]):
         self.vertex_list = vertex_list
 
         self.__in_degree_list = [0 for _ in range(len(vertex_list))]
@@ -171,6 +174,7 @@ class ActivityNetwork(object):
                 if self.vertex_list[path[j]].index in tmp:
                     return False
         return True
+
 
 class SortedList(object):
     def __init__(self):
