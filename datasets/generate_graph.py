@@ -38,6 +38,20 @@ def get_layer_graph_1() -> LayerNetworkGraph:
         edge_layer=[[0, 1], [1, 3], [0, 4], [2, 3], [2, 4], [3, 5], [4, 5], [4, 6], [5, 6], [5, 7], [6, 7]]
     )
 
+def getdg_1():
+    # 有向有环图
+    return generate_graph(name_list=["R", "B", "C", "A", "D", "E", "F", "F",
+                                     "G", "H", "I", "J", "K", "L"],
+                          edge_list=[[0, 1], [0,2],[0,3],
+                                     [1, 4],
+                                     [2, 1], [2, 4], [2,5],
+                                     [3, 6], [3,7],
+                                     [4, 12],
+                                     [5, 8],
+                                     [6, 9],
+                                     [7, 9],[7, 10],
+                                     [8, 5], [8,11],[9,11], [10, 9], [11, 0], [11, 9], [12, 8]])
+
 
 def generate_layer_graph(name_layer, edge_layer):
     vertex_layer = []
