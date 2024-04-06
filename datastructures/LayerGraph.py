@@ -6,31 +6,32 @@
 from typing import List
 
 from datastructures.func import insert_vertex_sorted
-from datastructures.graph_entities import Edge
+from datastructures.graph_entities import Vertex, Edge
 
 
 class LayerNetworkGraph(object):
-    def __init__(self, num_ver: int, vertex_layer: List[List], children: List[List]):
+    def __init__(self, vertex_list: List[Vertex], vertex_layer: List[List[int]], children: List[List[int]]):
+        """
+
+        :param vertex_list: List of Vertex ordered by index
+        :param vertex_layer: indices of vertices for each layer
+        :param children: children for each vertex
+        """
+        self.vertex_list = vertex_list
         self.vertex_layer = vertex_layer
-        self.num_ver = num_ver
-        self.vertex_list = []
-        for layer in vertex_layer:
-            self.vertex_list.extend(layer)
+        self.children = children
+        self.num_ver = len(vertex_list)
         self.indegree = [0] * self.num_ver
         self.outdegree = [0] * self.num_ver
+        self.children = children
         self.edge_list = []
-        if children:
-            self.children = children
-            for i, child_list in enumerate(children):
-                self.outdegree[i] = len(child_list)
-                # print(child_list)
-                for child in child_list:
-                    self.indegree[child] += 1
-                    self.edge_list.append([i, child])
-        else:
-            self.children = [[] for _ in range(self.num_ver)]
-        # print(self.edge_list)
-        
+        for i, child_list in enumerate(children):
+            self.outdegree[i] = len(child_list)
+            # print(child_list)
+            for child in child_list:
+                self.indegree[child] += 1
+                self.edge_list.append([i, child])
+
     def add_edge(self, edge):
         self.edge_list.append(edge)
         insert_vertex_sorted(array=self.children[edge.pre_v], key=self.vertex_list[edge.post_v])
@@ -42,27 +43,33 @@ class LayerNetworkGraph(object):
         for i in range(len(self.vertex_list)):
             print(self.vertex_list[i].name, end=': [')
             for ver in self.children[i]:
-                print(ver.name, end=', ')
+                print(self.vertex_list[ver].name, end=', ')
             print("]")
 
     def reverse_graph(self):
         # Depth = 0
         Depth = len(self.vertex_layer)
-        new_vertex_layer = [self.vertex_layer[Depth-1-i] for i in range(Depth)]
+        new_vertex_layer = [self.vertex_layer[Depth - 1 - i] for i in range(Depth)]
         new_children = [[] for _ in range(self.num_ver)]
         for i, child_list in enumerate(self.children):
             for child in child_list:
                 new_children[child].append(i)
-        rev_graph = LayerNetworkGraph(num_ver=self.num_ver,
-                        vertex_layer=new_vertex_layer, children=new_children)
+        rev_graph = LayerNetworkGraph(vertex_list=self.vertex_list,
+                                      vertex_layer=new_vertex_layer, children=new_children)
         return rev_graph
 
     def print_children(self):
         print("====children====")
         for ver_list in self.vertex_layer:
-            print([item.name for item in ver_list])
+            print([self.vertex_list[idx].name for idx in ver_list])
             # print("[", end='')
-            for ver in ver_list:
-                print(ver.name, ":", self.children[ver.index])
-                # print(ver.name, ":", [self.vertex_list[idx].name for idx in self.children[ver.index]])  # , end=',')
+            # for ver in ver_list:
+            #     print(ver.name, ":", self.children[ver.index])
+            #     print(ver.name, ":", [self.vertex_list[idx].name for idx in self.children[ver.index]])  # , end=',')
             # print("]")
+
+    def __len__(self):
+        return len(self.vertex_list)
+
+    def depth(self):
+        return len(self.vertex_layer)
