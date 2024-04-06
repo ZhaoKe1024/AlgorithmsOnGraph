@@ -46,27 +46,54 @@ def find(graph: LayerNetworkGraph, v: Vertex) -> List[tuple]:
     marked[v.index] = True
     # 直接后继直接添加
     for child in graph.children[v.index]:
+        # print("add:", graph.vertex_list[child].name)
         marked[child] = True
 
         que.append((graph.vertex_list[child], 1))
         # if len(graph.children[])
         Li.append((graph.vertex_list[child], 1))
 
+    # 判断第0层的后代有没有这一层的必经点，
+    # 出度等于这一层所有点的出度之和，其他点出度为0
+    for child in graph.children[v.index]:
+        print("name:", graph.vertex_list[child].name, sum([graph.outdegree[ind] for ind in graph.children[v.index]]))
+        print("-->", graph.outdegree[child], sum([graph.outdegree[ind] for ind in graph.children[v.index]]))
+        if graph.outdegree[child] == sum([graph.outdegree[ind] for ind in graph.children[v.index]]):
+            return Li
+
     # 后续的后继就要判断是不是被当前点隔绝的了，是的话不能加，那称不上是共同祖先，
+    ind = 0
     while len(que) > 0:
         t, depth = que.popleft()
-        if len(graph.vertex_layer[t.depth]) < 2:
-            continue
+        # if len(graph.vertex_layer[t.depth]) < 2:
+        #     continue
+        # print([ind.index for ind in que])
+        ind += 1
+        # print(que)
+        # print(ind, t.index)
+        # print("cur:", graph.vertex_list[t.index].name)
+        # print("whose children: ", [graph.vertex_list[item].name for item in graph.children[t.index]])
         for child in graph.children[t.index]:
             if not marked[child]:
                 marked[child] = True
+
                 que.append((graph.vertex_list[child], depth + 1))
                 # 入度是1的节点不能算共同祖先，它只是流经的一条边
                 # 不行，即使跳过了该点，该点的后继也不好判断，还是得分层，割点后面的都得抛去
-                if graph.indegree[child] == 1:  # and graph.outdegree[child.index] == 1:
-                    pass
-                else:
-                    Li.append((graph.vertex_list[child], depth + 1))
+                # if graph.indegree[child] == 1:  # and graph.outdegree[child.index] == 1:
+                #     pass
+                # else:
+                #     Li.append((graph.vertex_list[child], depth + 1))
+                # print("add:", graph.vertex_list[child].name)
+                Li.append((graph.vertex_list[child], depth + 1))
+                # print(graph.vertex_list[child].name)
+
+                # 判断该点是不是这一层的必经点，
+                # 出度等于这一层所有点的出度之和，其他点出度为0
+                print("name:", graph.vertex_list[child].name, sum([graph.outdegree[ind] for ind in graph.children[t.index]]))
+                print("-->", graph.outdegree[child], sum([graph.outdegree[ind] for ind in graph.children[t.index]]))
+                if graph.outdegree[child] == sum([graph.outdegree[ind] for ind in graph.children[t.index]]):
+                    break
     return Li
 
 
@@ -74,7 +101,15 @@ def find_all_ca(graph: LayerNetworkGraph, v: Vertex, w: Vertex) -> List[Vertex]:
     print("----find nearest common ancestor----")
     # 图的边全部逆转，得到新的图
     inv_graph = graph.reverse_graph()
+    print([ver.name for ver in inv_graph.vertex_list])
+    # print(inv_graph.vertex_layer)
+    # print(inv_graph.indegree)
+    # print(inv_graph.outdegree)
+    print(inv_graph.children)
     # 找到两个节点的所有前驱节点及对应的节点跳数
+
+    v.index = inv_graph.num_ver-1-v.index
+    w.index = inv_graph.num_ver-1-w.index
     Lv = find(inv_graph, v)
     Lw = find(inv_graph, w)
     # print(v.name, w.name)

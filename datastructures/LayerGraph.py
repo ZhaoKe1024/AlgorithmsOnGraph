@@ -19,24 +19,31 @@ class LayerNetworkGraph(object):
         """
         self.vertex_list = vertex_list
         self.vertex_layer = vertex_layer
+        for j, layer in enumerate(vertex_layer):
+            for idx in layer:
+                self.vertex_list[idx].depth = j
         self.children = children
         self.num_ver = len(vertex_list)
         self.indegree = [0] * self.num_ver
         self.outdegree = [0] * self.num_ver
-        self.children = children
         self.edge_list = []
-        for i, child_list in enumerate(children):
-            self.outdegree[i] = len(child_list)
-            # print(child_list)
-            for child in child_list:
-                self.indegree[child] += 1
-                self.edge_list.append([i, child])
+        if children or len(children)>0:
+            for i, child_list in enumerate(children):
+                self.outdegree[i] = len(child_list)
+                # print(child_list)
+                for child in child_list:
+                    self.vertex_list[child].depth = i + 1
+                    self.indegree[child] += 1
+                    self.edge_list.append((i, child))
+        else:
+            self.children = [[] for _ in range(self.num_ver)]
 
-    def add_edge(self, edge):
-        self.edge_list.append(edge)
-        insert_vertex_sorted(array=self.children[edge.pre_v], key=self.vertex_list[edge.post_v])
-        self.indegree[edge.post_v] += 1
-        self.outdegree[edge.pre_v] += 1
+    def add_edge(self, pre_idx, post_idx):
+        # self.edge_list.append(edge)
+        # insert_vertex_sorted(array=self.children[edge.pre_v], key=self.vertex_list[edge.post_v])
+        self.children[pre_idx].append(post_idx)
+        self.indegree[post_idx] += 1
+        self.outdegree[pre_idx] += 1
 
     def print_edges(self) -> None:
         print(f"=======AdjList_Graph=======")
@@ -49,13 +56,26 @@ class LayerNetworkGraph(object):
     def reverse_graph(self):
         # Depth = 0
         Depth = len(self.vertex_layer)
-        new_vertex_layer = [self.vertex_layer[Depth - 1 - i] for i in range(Depth)]
-        new_children = [[] for _ in range(self.num_ver)]
-        for i, child_list in enumerate(self.children):
-            for child in child_list:
-                new_children[child].append(i)
-        rev_graph = LayerNetworkGraph(vertex_list=self.vertex_list,
-                                      vertex_layer=new_vertex_layer, children=new_children)
+        new_vertex_layer = []
+        for i in range(Depth):
+            new_vertex_layer.append([self.num_ver-1-val for val in self.vertex_layer[Depth - 1 - i]])
+        # print("new layers:")
+        # print(new_vertex_layer)
+        # new_children = [[] for _ in range(self.num_ver)]
+        # for i, child_list in enumerate(self.children):
+        #     for child in child_list:
+        #         new_children[child].append(i)
+        rev_graph = LayerNetworkGraph(vertex_list=self.vertex_list[::-1],
+                                      vertex_layer=new_vertex_layer, children=[])
+        for i in range(len(rev_graph)):
+            # Reverse numbering for each node
+            rev_graph.vertex_list[i].index = i
+        for edge in self.edge_list:
+            # Reverse the direction of each edge
+            rev_graph.add_edge(self.num_ver-1-edge[1], self.num_ver-1-edge[0])
+        # rev_graph.indegree = self.outdegree
+        # rev_graph.outdegree = self.indegree
+
         return rev_graph
 
     def print_children(self):

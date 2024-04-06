@@ -8,9 +8,10 @@ import numpy as np
 
 
 class Vertex(object):
-    def __init__(self, index, name=None, duration=None):
+    def __init__(self, index, name=None, duration=None, depth=0):
         self.index = index
         self.name = name if name else str(index)
+        self.depth = depth
         self.in_job_pre = -1
         self.in_mac_pre = -1
         self.in_job_post = -1
