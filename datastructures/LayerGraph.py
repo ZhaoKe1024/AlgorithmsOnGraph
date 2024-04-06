@@ -9,23 +9,28 @@ from datastructures.func import insert_vertex_sorted
 from datastructures.graph_entities import Edge
 
 
-class LayerEdge(object):
-    def __init__(self, in_layer, in_index, out_layer, out_index):
-        self.in_layer = in_layer
-        self.in_index = in_index
-        self.out_layer = out_layer
-        self.out_index = out_index
-
-
 class LayerNetworkGraph(object):
-    def __init__(self, vertex_list: List, layer_map):
-        self.vertex_list = vertex_list
-        self.layer_map = layer_map
+    def __init__(self, num_ver: int, vertex_layer: List[List], children: List[List]):
+        self.vertex_layer = vertex_layer
+        self.num_ver = num_ver
+        self.vertex_list = []
+        for layer in vertex_layer:
+            self.vertex_list.extend(layer)
+        self.indegree = [0] * self.num_ver
+        self.outdegree = [0] * self.num_ver
         self.edge_list = []
-        self.children = [[] for _ in range(len(self.vertex_list))]
-        self.indegree = [0] * len(self.vertex_list)
-        self.outdegree = [0] * len(self.vertex_list)
-
+        if children:
+            self.children = children
+            for i, child_list in enumerate(children):
+                self.outdegree[i] = len(child_list)
+                # print(child_list)
+                for child in child_list:
+                    self.indegree[child] += 1
+                    self.edge_list.append([i, child])
+        else:
+            self.children = [[] for _ in range(self.num_ver)]
+        # print(self.edge_list)
+        
     def add_edge(self, edge):
         self.edge_list.append(edge)
         insert_vertex_sorted(array=self.children[edge.pre_v], key=self.vertex_list[edge.post_v])
@@ -41,10 +46,23 @@ class LayerNetworkGraph(object):
             print("]")
 
     def reverse_graph(self):
-        Depth = len(self.layer_map)
-        L = len(self.vertex_list)
-        new_map = [[L-1-i for i in self.layer_map[Depth-1-i]] for i in range(Depth)]
-        rev_graph = LayerNetworkGraph(vertex_list=self.vertex_list, layer_map=new_map)
-        for edge in self.edge_list:
-            rev_graph.add_edge(Edge(edge.edge_id, pre=edge.post_v, post=edge.pre_v, weight=edge.weight))
+        # Depth = 0
+        Depth = len(self.vertex_layer)
+        new_vertex_layer = [self.vertex_layer[Depth-1-i] for i in range(Depth)]
+        new_children = [[] for _ in range(self.num_ver)]
+        for i, child_list in enumerate(self.children):
+            for child in child_list:
+                new_children[child].append(i)
+        rev_graph = LayerNetworkGraph(num_ver=self.num_ver,
+                        vertex_layer=new_vertex_layer, children=new_children)
         return rev_graph
+
+    def print_children(self):
+        print("====children====")
+        for ver_list in self.vertex_layer:
+            print([item.name for item in ver_list])
+            # print("[", end='')
+            for ver in ver_list:
+                print(ver.name, ":", self.children[ver.index])
+                # print(ver.name, ":", [self.vertex_list[idx].name for idx in self.children[ver.index]])  # , end=',')
+            # print("]")
